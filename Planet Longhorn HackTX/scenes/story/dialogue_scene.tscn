@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/story/dialogue_scene.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/story/story_stage.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/story/continue_marker.gd" id="3"]
+
+[node name="DialogueScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Stage" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2")
+
+[node name="Box" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.06
+anchor_top = 1.0
+anchor_right = 0.94
+anchor_bottom = 1.0
+offset_top = -390.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_type_variation = &"DialoguePanel"
+
+[node name="VBox" type="VBoxContainer" parent="Box"]
+layout_mode = 2
+
+[node name="SpeakerName" type="Label" parent="Box/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LineText" type="RichTextLabel" parent="Box/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_active = false
+
+[node name="Choices" type="VBoxContainer" parent="Box/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Box/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 2
+
+[node name="Marker" type="Control" parent="Box/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("3")
+
+[node name="SkipButton" type="Button" parent="Box/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ContinueButton" type="Button" parent="Box/VBox/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
