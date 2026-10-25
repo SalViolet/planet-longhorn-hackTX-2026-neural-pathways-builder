@@ -6,6 +6,7 @@ extends RefCounted
 ## One glyph id per trial. Exactly round(count * target_probability) trials are the target
 ## (the thief), never two in a row. Harmless glyphs never repeat back to back.
 static func generate(count: int, target_probability: float, rng: RandomNumberGenerator) -> Array[int]:
+	@warning_ignore("integer_division")
 	var target_count := clampi(roundi(count * target_probability), 0, (count + 1) / 2)
 	var is_target: Array[bool] = []
 	is_target.resize(count)

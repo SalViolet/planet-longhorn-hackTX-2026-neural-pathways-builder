@@ -8,6 +8,7 @@ var _until_us := 0
 var _color := TaskConst.COLOR_MISTAKE
 var _drawn_alpha := 0.0
 var _player: AudioStreamPlayer
+var _bing_player: AudioStreamPlayer
 var _label: Label
 
 
@@ -17,6 +18,9 @@ func _ready() -> void:
 	_player = AudioStreamPlayer.new()
 	_player.stream = _make_tone()
 	add_child(_player)
+	_bing_player = AudioStreamPlayer.new()
+	_bing_player.stream = make_bing()
+	add_child(_bing_player)
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", TaskConst.FEEDBACK_FONT_SIZE)
 	_label.add_theme_color_override("font_color", TaskConst.COLOR_MISTAKE)
@@ -44,10 +48,24 @@ func play_too_slow() -> void:
 	play(true, TaskConst.TOO_SLOW_TEXT)
 
 
-## Soft green glow after a correct response. Silent.
-func play_correct(text: String = "") -> void:
+## Soft green glow after a correct response, with the "bing" (Corsi passes false: it dings once per set).
+func play_correct(text: String = "", with_sound: bool = true) -> void:
 	_color = TaskConst.COLOR_CORRECT
 	_start_glow(text)
+	if with_sound:
+		play_bing()
+
+
+## The happy "bing" on its own.
+func play_bing() -> void:
+	if DisplayServer.get_name() != "headless":
+		_bing_player.play()
+
+
+## The low "bom" on its own (the same tone as a mistake, with no glow).
+func play_bom() -> void:
+	if DisplayServer.get_name() != "headless":
+		_player.play()
 
 
 func _start_glow(text: String = "") -> void:
@@ -83,6 +101,30 @@ func _draw() -> void:
 		color.a = _color.a * _drawn_alpha * fade
 		draw_rect(Rect2(Vector2.ONE * inset, size - Vector2.ONE * inset * 2.0),
 				color, false, TaskConst.MISTAKE_CUE_BAND_WIDTH)
+
+
+## Two quick rising notes, built in code.
+static func make_bing() -> AudioStreamWAV:
+	var count := int(TaskConst.BING_SECONDS * TaskConst.BING_RATE)
+	var data := PackedByteArray()
+	data.resize(count * 2)
+	for i in count:
+		var t := float(i) / TaskConst.BING_RATE
+		var sample := _bing_note(t, TaskConst.BING_HZ_LOW) \
+				+ _bing_note(t - TaskConst.BING_NOTE_GAP, TaskConst.BING_HZ_HIGH)
+		data.encode_s16(i * 2, int(clampf(sample * TaskConst.BING_VOLUME, -1.0, 1.0) * 32767.0))
+	var stream := AudioStreamWAV.new()
+	stream.format = AudioStreamWAV.FORMAT_16_BITS
+	stream.mix_rate = TaskConst.BING_RATE
+	stream.stereo = false
+	stream.data = data
+	return stream
+
+
+static func _bing_note(t: float, hz: float) -> float:
+	if t < 0.0:
+		return 0.0
+	return sin(TAU * hz * t) * minf(t / TaskConst.BING_ATTACK, 1.0) * exp(-t * TaskConst.BING_DECAY)
 
 
 static func _make_tone() -> AudioStreamWAV:

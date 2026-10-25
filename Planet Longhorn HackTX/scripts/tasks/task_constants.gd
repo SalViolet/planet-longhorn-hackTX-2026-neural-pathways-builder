@@ -44,6 +44,16 @@ const MISTAKE_TONE_RATE := 22050
 const MISTAKE_TONE_DECAY := 7.0
 const MISTAKE_TONE_VOLUME := 0.35
 
+# The "bing" for a right answer (two quick rising notes). The "bom" is the mistake tone above.
+const BING_RATE := 22050
+const BING_SECONDS := 0.5
+const BING_HZ_LOW := 880.0
+const BING_HZ_HIGH := 1318.5
+const BING_NOTE_GAP := 0.09 # Seconds before the second note starts.
+const BING_ATTACK := 0.005
+const BING_DECAY := 7.0
+const BING_VOLUME := 0.3
+
 # The big push button for one-tap tasks (Go/No-Go, CPT).
 const PAD_SIZE := Vector2(560, 160)
 const PAD_BOTTOM_MARGIN := 60.0

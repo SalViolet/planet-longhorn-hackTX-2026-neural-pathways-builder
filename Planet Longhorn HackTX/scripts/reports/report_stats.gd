@@ -29,6 +29,7 @@ static func sd(values: Array[float]) -> float:
 static func trend(values: Array[float]) -> Trend:
 	if values.size() < ReportConst.MIN_RUNS_FOR_TREND:
 		return Trend.TOO_FEW
+	@warning_ignore("integer_division")
 	var half := values.size() / 2
 	var earlier := mean(values.slice(0, half))
 	var later := mean(values.slice(values.size() - half))

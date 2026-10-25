@@ -1,16 +1,16 @@
 # Game Design
 
-Working notes for the alien quest game. Read this before making changes.
+Working notes for Planet Longhorn. Read this before making changes. Approved design goals and current implementation are labeled separately below.
 
 ## Vision
 
-A game first: a fun, kid-friendly adventure that wraps established cognitive tasks in a story. The player is a kid transported to a planet run by alien cartoon longhorns. Each task is a story mission. The game adjusts the challenge: more exposure to weaker domains, harder settings where the player is strong, gentler ones where they struggle.
+A game first: a fun, kid-friendly adventure that wraps established cognitive tasks in a story. The player is transported to a planet run by alien cartoon longhorns. Each task is a story mission. The game adjusts the challenge: more exposure to weaker domains, harder settings where the player is strong, gentler ones where they struggle.
 
 Measurement comes second. The game records numbers so the challenge can be tuned, but it never presents them as an assessment. It never claims to diagnose anything or to train the brain. The honest wording is "adjusts the challenge". Nothing in the game text, store text, or reports may say otherwise.
 
 ## Players and age bands
 
-**Target age: 6 to 12.** The range is wide, so there are two age bands, chosen on first launch on a simple picture-based screen (a parent or the player picks). A profile is an avatar and an age band, nothing else.
+**Design target: ages 6 to 12.** The approved design uses two age bands, but the current build has no age-band selection or age-band-specific settings. Profiles currently ask for a typed nickname and a chosen avatar; they do not store age.
 
 | | Band A (ages 6-8) | Band B (ages 9-12) |
 |---|---|---|
@@ -24,7 +24,7 @@ Each task's difficulty-to-params mapping is looked up per band. Band ranges live
 
 ### Band defaults
 
-Band B = the current build (the earlier spec values). Band A = **proposed, waiting for the owner's approval**. Nothing below is built for Band A yet.
+Band B lists current task defaults. Band A values below are approved design choices, but are not implemented. The current build has no age-band selection.
 
 | Task | Parameter | Band B (current) | Band A (proposed) |
 |---|---|---|---|
@@ -55,7 +55,7 @@ Note: Band A DCCS has no mixed block, so switch cost and mixing cost do not exis
 ## Purpose: game first, measurement second
 
 - It should be fun to play. Metrics are for tuning the challenge, not for showing the player.
-- Players never see raw metrics (d-prime, accuracy percentages, "wrong" counts). They see positive rewards. Numbers go to the developer dashboard (milestone 7b), which is open access.
+- Approved design goal: keep raw metrics off player-facing screens and show positive rewards. The current build still shows task results and best-result numbers on the hub; the full dashboard has not been built.
 - Optional fixed-parameter **calibration runs** are kept separate from story missions: same task, fixed values, no story, no effect on the story or the adaptive engine. Planned, not built.
 - Never claim to diagnose or to train the brain.
 
@@ -68,12 +68,12 @@ Note: Band A DCCS has no mixed block, so switch cost and mixing cost do not exis
 - The Corsi drum stones use ONE tone for every stone, so it stays a spatial task and not a melody task.
 - Trial feedback ("juice") is allowed on the player's RESPONSE and at the reward moment, never during the stimulus period. Stimulus timing and trial structure never change because of theming.
 
-## Privacy (all players are under 13: COPPA-level care)
+## Privacy (design target includes children under 13)
 
 - No accounts, no logins, no network calls, no analytics, no ads, no third-party SDKs.
-- All data stays on the device, in a local save file only.
-- The developer dashboard is open access (owner decision). Only destructive controls (Reset story, Delete profile) sit behind a simple adult-level question.
-- Do not collect names, photos, voice, or location. A player profile is a chosen avatar and an age band only.
+- All data stays on the device in local save files.
+- The hub currently offers a locally generated clinician report. There is no general developer dashboard and no adult-question gate on Reset story or Delete profile.
+- Current profiles contain a typed nickname and chosen avatar. The game does not collect age, photos, voice, or location. A no-name, avatar-plus-age-band profile remains an approved design goal, not current behavior.
 - Final legal review is part of milestone 10, before any child outside the owner's own household plays.
 - More detail and the checklist: `docs/PRIVACY_AND_ETHICS.md`.
 
@@ -145,7 +145,7 @@ These are the Band B values and what is built today. Tune them in playtesting. E
 - The plot always advances: every mission story works in any order, and the ending plays once after all four missions have been played.
 - Limits: the skill estimate does not account for the difficulty level a result came from, and the numbers are not comparable between children or with published tests. All values live in `scripts/adaptive/adaptive_constants.gd` and `difficulty_ladders.gd`.
 
-### Proposed Band A safeguards (waiting for approval)
+### Approved Band A safeguards (not implemented)
 
 - Ladders have 3 levels (see the table above), so the hardest Band A level is gentler than Band B's middle.
 - Lower the level after one run under 65% accuracy; raise it only after two runs in a row at 85% or above.
@@ -184,7 +184,7 @@ These come from the owner's decisions. Plan only: build them in the milestone sh
 - **Positive feedback only.** No "wrong" or "failed" anywhere the player can see.
 - **One tone for every Corsi stone.**
 - **Adaptive mission choice, fixed plot.** The adaptive engine chooses missions from the player's weakest domains, but the plot always advances.
-- **Placeholder art only for now.** Use generated shapes and sounds. The one exception is the start screen background image the owner supplied (`art/start_bg.png`).
+- **Art and audio:** most character and scene art is drawn in code, with generated sound effects. The project also includes the looping track `audio/lofi_positive.mp3`. Final art and voiceover are not implemented.
 
 ## Milestones
 
@@ -198,27 +198,27 @@ These come from the owner's decisions. Plan only: build them in the milestone sh
 | 5 | DCCS | Built early (first version, Band B values). Band A version still to do |
 | 6 | CPT | Built early (first version, Band B values). Band A version still to do |
 | 7 | Adaptive engine with age bands | First version built, **without age bands**. Bands still to do |
-| 7b | Developer dashboard (open access; a first report button is already on the hub) and an adult-question gate for Reset story and Delete profile | Not started |
+| 7b | Developer dashboard and adult-question gate for Reset story and Delete profile | Partial: a clinician-report button exists; the full dashboard and gate are not implemented |
 | 8 | Story layer and ranch/herd meta-loop | Story layer first version built (dialogue, scenes, choices, saved progress). Meta-loop, skins and the mystery arc are planned |
-| 9 | Art, audio, voiceover, polish | Not started. Art and sound are placeholders, on purpose |
+| 9 | Art, audio, voiceover, polish | Partial: code-drawn art, generated sound effects, and one music track are present; final art and voiceover remain |
 | 10 | Privacy and legal review | Started: engineering checks and the checklist (`docs/PRIVACY_AND_ETHICS.md`). The legal review must happen before any child outside the owner's household plays |
 
 ## Implemented so far
 
-This describes the current build. Some of it conflicts with the decisions above: see "Pending decisions".
+This section describes current behavior. The approved design goals and remaining implementation gaps are listed separately below.
 
 - **Flow:** Begin Quest opens "Who's playing?", then plays the arrival story the first time, then the Corsi mission, then its results screen, then the aftermath story, then the hub. After that, a returning player goes straight to the hub. A mission's intro story plays every time until that mission has been completed once. From the hub, the next mission (chosen by the adaptive engine) plays its intro story, the task, its results screen, then its aftermath story. After all four, the ending plays once.
 - **Corsi in the story:** the ship's door panel mirrors the drum stones, so the Corsi screen is that panel. Every stone makes the same single drum tone, played when it lights and when it is tapped.
 - **Plot always advances:** the elder's reaction line depends on how the run went (great, good, tried). The rest of the story is identical.
 - **Hub:** lists all four missions with a quest progress bar, the level and best result for each, and "(up next)" on the engine's pick. Any mission can be replayed. It has "Reset story" and "Switch player" buttons.
-- **Progress and profiles:** each profile has its own story progress, skill estimates, difficulty levels and trial logs, in a folder named by a random code. A profile is currently a typed nickname plus a picked avatar (up to 8 players; 6 avatars: four kids in space suits and two young longhorns, drawn in code as placeholders). The avatar number is saved in the profile's old "color" field. The nickname is stored only in `profiles.cfg`. Profiles can be deleted after a confirmation.
-- **Go/No-Go:** cow = go, snake = no-go. An instructions screen before practice and a break screen between practice and the real trials (both outside the trials). No feedback during practice. A response counts from stimulus onset to the end of the blank pause. Taps during the fixation cross are ignored for scoring but counted in the log.
+- **Progress and profiles:** each profile has its own story progress, skill estimates, difficulty levels, trial logs, points and run history, in a folder named by a random code. A profile is currently a typed nickname plus a picked avatar (up to 8 players; 6 avatars: four kids in space suits and two young longhorns, drawn in code). The avatar index is stored in the field named `color`. The nickname is in `profiles.cfg` and is copied to a report when one is generated. Profiles can be deleted after a confirmation.
+- **Go/No-Go:** cow = go, snake = no-go. There is an instructions screen before practice and a break screen between practice and real trials (both outside trials). Feedback cues also apply during practice. A response counts from stimulus onset to the end of the blank pause. Taps during the fixation cross are ignored for scoring but counted in the log.
 - **Trial log columns:** `task, trial, params, stimulus, response, correct, rt_ms, valid, anticipatory, invalid_reason`. A response under 100 ms is flagged `anticipatory` and kept. A trial interrupted by window focus loss or by the skip warning is logged invalid with a reason and left out of the scores.
-- **Skipping a game:** every game has a small, dim "Skip" button in the top-right corner, and Esc or the gamepad's back button do the same. It opens a warning with "Keep playing" focused first, and the game pauses while it is open. "Skip game" throws the run away (nothing saved, counted or scored), the hub shows the mission as "(skipped)", and the quest cannot be finished without playing it.
+- **Skipping a game:** every game has a small, dim "Skip" button in the top-right corner, and Esc or the gamepad's back button do the same. It opens a warning with "Keep playing" focused first, and the game pauses while it is open. "Skip game" discards the partial run and trial log; story progress records a skip, but does not count it as a play. The hub marks the mission as skipped, and the quest cannot be finished without playing it.
 - **Whole game required:** the ending only plays once all four games have actually been finished.
 - **Levels from performance:** the first finished run of a game places the player (up two levels for a great run down to two levels down for a very poor one). After that the 2-down/1-up rule moves them one step at a time. The hub and results screens show the level.
 - **Dialogue:** BBCode text effects, typing blips per speaker, talking mouths, blinking, entrances, screen shake and drum ripples, a short flavor choice in each mission intro and the ending, and funny elder voices (Grand Elder Bram booms and makes cow puns, Elder Tilda is dry and calls the kid "starling").
-- **Progress bars:** the hub shows quest progress (missions finished out of four). Every task shows a thin bar at the top that only steps between trials, counting trials actually played (Go/No-Go counts practice too; DCCS counts all blocks). Corsi's bar is a share of the longest possible run, so it jumps to full if the run ends early. CPT steps once per trial (trials finished out of all trials, so it is always accurate and stays put while the window is away), and story scenes show none (owner decision). `SHOW_PROGRESS_BAR` in `scripts/tasks/task_constants.gd` turns the task bars off.
+- **Progress bars:** the hub shows quest progress (missions finished out of four). Every task has a thin bar at the top that advances during active play and reaches full when the task finishes. Timed tasks interpolate through the active trial; Corsi reflects sequence playback and the player's taps. `SHOW_PROGRESS_BAR` in `scripts/tasks/task_constants.gd` turns the task bars off.
 - **Feedback text:** a short line in a fixed spot at the top of the screen (under the progress bar, not a popup), shown for 0.7 s with the glow: "Right!" (green), "Not that one" (orange, after a mistake), and "Too slow!" (orange, when a cow gets away in Go/No-Go or no sort happens in time in DCCS). Words are in `task_constants.gd`. Shown after the stimulus is gone; the owner asked for text during trials, which relaxes the earlier "no text during trials" rule for this line only.
 - **Mistake and correct cues:** after a correct response the screen edge glows soft green (silent); after a mistake it glows soft orange (`MistakeCue`, values in `task_constants.gd`), with no words. Go/No-Go and DCCS also play a low soft tone. Triggers: tapping a snake, a cow that got away, a wrong pen, no sort in time, and in Corsi a tap on the wrong stone (the stone turns orange, silent so every stone keeps the one tone). The glow only touches the edge, never the stimulus. CPT now has them too (green on a hit, orange on a harmless shape, "Too slow!" on a missed thief). Corsi has no time limit, so it has no "too slow". This feedback also applies to practice trials.
 - **Corsi input modes:** the white ring on a drum follows the input type. With mouse, trackpad or touch there is no ring until the pointer hovers a drum, and the ring follows the pointer. With keyboard or gamepad the ring marks the focused drum. The game switches automatically on the first input of the other kind (`CorsiBlock.pointer_mode`).
@@ -226,7 +226,7 @@ This describes the current build. Some of it conflicts with the decisions above:
 - **Sample data:** the profile screen's "Add sample player" button creates (or refreshes) a player called Sample with 14 days of made-up runs and points, so the report and points can be tried right away. It never touches real players. Code in `scripts/sample/sample_data.gd`.
 - **Music:** one looping lofi track (`audio/lofi_positive.mp3`, supplied by the owner) plays through the `Music` autoload on every screen. During the four tasks it drops a lot quieter (-34 dB instead of -12 dB, both in `ui_constants.gd`) so it never competes with the trials or Corsi's single drum tone. A "Music" switch in Settings turns it off (saved in settings.cfg). This is the one soundtrack that is not placeholder, so the track's licence must be checked before anyone outside the household plays.
 - **Push buttons:** Sorting Day uses the two pens as buttons. Go/No-Go ("HERD!") and Night Watch ("THIEF!") have one big button at the bottom centre, away from the stimulus (`ResponsePad`). Each button sinks when pressed and registers on the way down. Clicking anywhere else does nothing; Space/Enter/gamepad A and (in Sorting Day) the arrow keys still work. The button's label never changes during a run.
-- **Day-by-day data:** the report has a "Day by day" table and a per-task day-average table, and saves a spreadsheet file (`daily_metrics_<time>.csv`: date, task, runs that day, metric, day average) next to the HTML report. Both come from the saved run history, so they cover every day played on that profile.
+- **Day-by-day data:** the locally generated report has a "Day by day" table and a per-task day-average table, and saves a CSV file (`daily_metrics_<time>.csv`: date, task, runs that day, metric, day average) next to the HTML report. Both come from the saved run history, so they cover every day played on that profile.
 - **Title:** the start screen title is "PLANET LONGHORN" (was a working title). The hub and story still call the place "Longhorn Planet".
 - **Night Watch story:** the thief is a cow in a ski mask who has been sneaking hay out of the barn; the elders are embarrassed and the story says so before the watch ("It is a cow. In a ski mask."), and after it (the ski mask is found by the stream, "the cow says it was cold"). The harmless shapes are the honest cows of the herd. Results say "Masked cows caught/missed".
 - **Avatar = main character:** the avatar a player picks when they create their profile is the main character ("You") in every story scene. The four kid avatars change the hair style, skin, suit colour and goggles; the two calf avatars make the main character a young longhorn. Drawn in `story_stage.gd` from `ProfileConst.AVATARS`; the story text is unchanged (the elders still say "little traveler").
@@ -238,42 +238,41 @@ This describes the current build. Some of it conflicts with the decisions above:
 - **Where things live:** story text and missions in `scripts/story/story_data.gd`, scene order in `story_flow.gd`, placeholder art in `story_stage.gd`, profiles in `scripts/profiles/`.
 - **Placeholder names:** Grand Elder Bram, Elder Tilda, and "You" for the kid are placeholders.
 
-## Pending decisions: where the current build conflicts with the new decisions
+## Implementation gaps and remaining design questions
 
-Nothing below has been changed in the code. Each needs the owner's answer first.
+This list separates implementation gaps from design choices that still need an answer.
 
-1. **Profiles:** the build asks for a typed nickname. The decisions say no names: a profile is an avatar and an age band only, picked on a picture screen. The profile screen also needs reading and typing, which Band A should not need.
+1. **Profiles:** the current build asks for a typed nickname and avatar. The approved design is a profile with an avatar and age band only, selected without typing.
 2. **No age bands exist yet.** There is no first-launch band screen, no Band A values, and no per-band ladders.
-3. **Players see raw metrics.** Results screens show "Cows missed", "Wrong taps", "Snakes tapped by mistake", accuracy percentages, d-prime and criterion. The hub shows best span, best accuracy and best d-prime. This conflicts with "positive feedback only" and "not an assessment". The numbers should move to the parental-gated dashboard.
-4. **Levels shown to the player.** The hub and results show "Level N", "Level up!" and "Next time will be a little easier". Decide whether levels stay visible as game levels, or become stars and rewards with levels shown only on the dashboard.
-5. **Child-visible adult controls.** "Reset story" on the hub and "Delete" on the profile screen are visible to the player. They belong behind a simple adult-question gate.
+3. **Players see raw metrics.** Results screens show counts, accuracy, d-prime and criterion; the hub shows best results and levels. The planned dashboard is open access, but the current implementation is a clinician-report feature rather than a complete dashboard.
+4. **Levels shown to the player.** The hub and results currently show "Level N", "Level up!" and "Next time will be a little easier". The design decision about keeping levels visible or moving them to a dashboard remains open.
+5. **Child-visible destructive controls.** "Reset story" on the hub and "Delete" on the profile screen are available without an adult-question gate. The approved design calls for a simple adult-level question.
 6. **Reading required everywhere.** Instructions screens, the hub, the skip warning, profile screens and all story dialogue are text. Band A needs icons, pictures and short or pictorial story beats. Voiceover comes in milestone 9.
-7. **Corsi's starting span is set by the difficulty level (2 to 5)** and the maximum span is fixed at 9. Under the new decisions both depend on the difficulty level and the age band (proposed: Band A starts at 2 to 4 and stops at 5).
-8. **The difficulty rule does not match "accuracy about 75-85%".** Today a run counts as good at 85-90% or above and poor below 70%, so 70-85% changes nothing. To match the spec: harder after two runs at 85% or above, easier after one run below 75% (Band B), with gentler numbers for Band A (see Proposed Band A safeguards).
-9. **"Minimum share" is not guaranteed.** The scheduler gives weaker domains more weight and every domain a small floor weight, which is chance, not a guaranteed share. Proposal: every domain gets at least 15% of missions over any 12 missions.
-10. **First-run placement can move a player two levels,** which can push a Band A child too high. Proposal: at most +1 for Band A.
+7. **Corsi's starting span is set by difficulty (2 to 5)** and the maximum span is fixed at 9. The approved Band A design starts at 2 to 4 and stops at 5.
+8. **The difficulty rule does not match "accuracy about 75-85%".** Current task-specific thresholds leave a wide range where difficulty does not change. The approved target is to make difficulty easier below 75% and harder after two runs at or above 85%, with gentler safeguards for Band A.
+9. **"Minimum share" is not guaranteed.** The scheduler gives weaker domains more weight, but does not guarantee the approved 15% share for each domain over any 12 missions.
+10. **First-run placement can move a player two levels,** which can push a Band A child too high. The approved Band A safeguard limits first-run placement to at most +1 level.
 11. **Session pacing is missing:** no natural stopping point, no "short easy mission after a hard one" rule. Today a mission with its story takes 4-9 minutes.
-12. **The skip warning's wording and button** are text only, and "lost" is a harsh word for a child. Proposal: an icon button, and a pictorial, gentle warning ("This game will start over later").
-13. **Playtest came before DCCS, CPT and the adaptive engine in your order,** but they are already built. They are prototypes until real kids have played them.
-14. **CPT's length parameter is `duration_ms`.** You suggested `duration_minutes`. Cosmetic: constants can be written in minutes and converted.
+12. **Skip prompt wording and visuals:** the current warning and controls are text-based. The proposed child-friendly direction is an icon and gentle wording that explains the game can be played later.
+13. **Playtest came before DCCS, CPT and the adaptive engine in your order,** but they are already built. Treat them as prototypes until real kids have played them.
 
 ## Decisions made
 
 - **Band A defaults approved** as proposed in the table above (to be tuned after playtesting).
 - **Minimum share:** every domain gets at least 15% of missions over any 12 missions.
-- **Dashboard is open access: no gate.** This deliberately changes the earlier "dashboard behind a parental gate" decision. Only "Reset story" and "Delete profile" get a gate: a simple adult-level question.
+- **Dashboard is open access: no gate.** A clinician-report button exists, but the complete dashboard is not implemented. The approved adult-question gate for "Reset story" and "Delete profile" is not implemented.
 - **Avatars:** 6 (placeholder shapes until milestone 9).
-- **Age band screen:** two big pictures (a smaller kid for 6-8, a bigger kid for 9-12), one tap, changeable later from settings.
+- **Age band screen:** approved design is two big pictures (ages 6-8 and 9-12), one tap, changeable later from settings; not implemented.
 - **Sessions:** a natural stopping point only. After each mission's story reward, "See you next time" is offered as an equal choice to "Next mission". No timer.
 - **Playtest observer notes:** free text plus quick tick boxes (needed help reading, got frustrated, wanted to stop, smiled or laughed).
-- **Target age 6-12, two age bands** (A: 6-8, B: 9-12), chosen on a picture screen at first launch.
+- **Design target age 6-12, two age bands** (A: 6-8, B: 9-12). Age-band selection and settings are not implemented.
 - **Game first, measurement second.** The honest wording is "adjusts the challenge".
 - **Corsi uses one tone for every stone.**
-- **All players are under 13: COPPA-level care.** No accounts, network calls, analytics, ads or third-party SDKs. Local data only. No names, photos, voice or location.
+- **The design targets children under 13:** no accounts, network calls, analytics, ads or third-party SDKs; local data only. The current build stores a typed nickname and avatar, but no age, photos, voice or location.
 - **Two-dial adaptive spec, with difficulty ranges looked up per band.** Difficulty never changes mid-run.
 - **Corsi keeps its own step-up rule** (two trials per length, up after one correct, stop after two wrong). The engine sets the starting length.
 - **The WATCH / REPEAT label stays in Corsi** for now. It is text, so Band A needs an icon instead.
-- **Progress bar during trials:** kept for Corsi, Go/No-Go and DCCS. It is thin and static between trials. One constant turns it off. CPT has none, as the spec requires.
+- **Progress bars:** all four tasks show a thin bar that advances during active play and reaches full at completion. One constant turns the task bars off.
 - **Staircase runs once per finished run, not per trial.**
 - **Skip button during trials:** a small, dim, static button and a warning that only appears when the player asks. `SHOW_SKIP_BUTTON` turns the button off. A skipped run is not saved at all.
 - **Placement uses only the first finished run.**
@@ -282,4 +281,4 @@ Nothing below has been changed in the code. Each needs the owner's answer first.
 
 ## Open questions
 
-None right now. Answers from the owner's last round are in "Decisions made".
+The player-facing level display and the proposed skip-prompt wording and visuals still need a decision.

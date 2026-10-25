@@ -32,27 +32,39 @@ static func rules(count: int, switch_probability: float, previous_rule: int,
 	return out
 
 
-## Stimuli for a block: exactly round(count * conflict_probability) conflict items, shuffled,
-## with the two conflict items (and the two congruent items) used equally often.
+## Stimuli for a block: exactly round(count * conflict_probability) conflict items, and the two
+## conflict items (and the two congruent items) used equally often. The whole list is shuffled
+## together, so the order has no pattern, but it is reshuffled if one gift would repeat more than
+## DccsConst.MAX_SAME_STIMULUS_IN_ROW times in a row.
 static func stimuli(count: int, conflict_probability: float, rng: RandomNumberGenerator) -> Array[Dictionary]:
 	var conflict_count := clampi(roundi(count * conflict_probability), 0, count)
-	var flags: Array[bool] = []
+	var pool: Array[Dictionary] = []
+	_add_balanced(pool, _CONFLICT_ITEMS, conflict_count, rng)
+	_add_balanced(pool, _CONGRUENT_ITEMS, count - conflict_count, rng)
+	for attempt in DccsConst.SHUFFLE_ATTEMPTS:
+		_shuffle(pool, rng)
+		if longest_run(pool) <= DccsConst.MAX_SAME_STIMULUS_IN_ROW:
+			break
+	return pool
+
+
+## The most identical gifts (same color and shape) found one after another.
+static func longest_run(items: Array[Dictionary]) -> int:
+	var longest := 0
+	var run := 0
+	for i in items.size():
+		var same: bool = i > 0 and items[i]["hue"] == items[i - 1]["hue"] and items[i]["shape"] == items[i - 1]["shape"]
+		run = run + 1 if same else 1
+		longest = maxi(longest, run)
+	return longest
+
+
+# Adds `count` items from a pair, split evenly (when odd, a random one of the pair gets the extra).
+static func _add_balanced(pool: Array[Dictionary], pair: Array, count: int, rng: RandomNumberGenerator) -> void:
+	var first := rng.randi_range(0, 1)
 	for i in count:
-		flags.append(i < conflict_count)
-	_shuffle(flags, rng)
-	var conflict_turn := rng.randi_range(0, 1)
-	var congruent_turn := rng.randi_range(0, 1)
-	var out: Array[Dictionary] = []
-	for is_conflict in flags:
-		var item: Dictionary
-		if is_conflict:
-			item = _CONFLICT_ITEMS[conflict_turn % 2]
-			conflict_turn += 1
-		else:
-			item = _CONGRUENT_ITEMS[congruent_turn % 2]
-			congruent_turn += 1
-		out.append(item.duplicate())
-	return out
+		var item: Dictionary = pair[(i + first) % 2]
+		pool.append(item.duplicate())
 
 
 static func _shuffle(values: Array, rng: RandomNumberGenerator) -> void:

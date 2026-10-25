@@ -18,6 +18,10 @@ const DEFAULT_PARAMS := {
 	"iti_ms": 600,
 }
 
+# Gifts are shuffled for real, but never more than this many identical gifts in a row.
+const MAX_SAME_STIMULUS_IN_ROW := 3
+const SHUFFLE_ATTEMPTS := 200
+
 const LEAD_IN_MS := 800 # Blank pause after Start, and after an aborted trial.
 
 # --- Text (shown only outside trials) ---

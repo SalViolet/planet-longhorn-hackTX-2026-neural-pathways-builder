@@ -21,6 +21,7 @@ func test_spec_values_match_the_design_doc() -> void:
 	assert_eq(SPEC["trial_ms"], 2000)
 	assert_eq(SPEC["target_probability"], 0.10)
 	assert_eq(SPEC["duration_ms"], 300000, "5 minutes")
+	@warning_ignore("integer_division")
 	assert_eq(SPEC["duration_ms"] / SPEC["trial_ms"], 150)
 	assert_eq(CptConst.DEV_TRIALS, 30)
 	assert_between(CptConst.GLYPH_COUNT, 8, 10, "8-10 glyphs")

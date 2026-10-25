@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://cdgyn5avjaius"]
 
-[ext_resource type="Script" path="res://scripts/start_screen.gd" id="1"]
-[ext_resource type="Texture2D" path="res://art/start_bg.png" id="2"]
+[ext_resource type="Script" uid="uid://dfso7q4vxsas3" path="res://scripts/start_screen.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dp35ylokj11wk" path="res://art/start_bg.png" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/settings_panel.tscn" id="3"]
 
-[node name="StartScreen" type="Control"]
+[node name="StartScreen" type="Control" unique_id=1342592845]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +13,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1937840228]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,10 +25,10 @@ texture = ExtResource("2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=2111033452]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = -1
 anchor_top = 0.2
 anchor_right = 1.0
 anchor_bottom = 0.2
@@ -41,24 +41,25 @@ text = "PLANET LONGHORN"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="."]
+[node name="Subtitle" type="Label" parent="." unique_id=1447029305]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 14
+anchors_preset = -1
 anchor_top = 0.2
 anchor_right = 1.0
 anchor_bottom = 0.2
 offset_top = 110.0
 offset_bottom = 170.0
 grow_horizontal = 2
+grow_vertical = 2
 theme_type_variation = &"SubtitleLabel"
 text = "Tagline"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Menu" type="VBoxContainer" parent="."]
+[node name="Menu" type="VBoxContainer" parent="." unique_id=582860378]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
 anchor_top = 0.66
 anchor_right = 0.5
@@ -71,22 +72,22 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="BeginButton" type="Button" parent="Menu"]
+[node name="BeginButton" type="Button" parent="Menu" unique_id=1133629079]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Begin Quest"
 
-[node name="SettingsButton" type="Button" parent="Menu"]
+[node name="SettingsButton" type="Button" parent="Menu" unique_id=1544740483]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Settings"
 
-[node name="QuitButton" type="Button" parent="Menu"]
+[node name="QuitButton" type="Button" parent="Menu" unique_id=818785215]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
 
-[node name="VersionLabel" type="Label" parent="."]
+[node name="VersionLabel" type="Label" parent="." unique_id=1753890353]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3
@@ -104,6 +105,6 @@ theme_type_variation = &"VersionLabel"
 text = "v0.0.0"
 horizontal_alignment = 2
 
-[node name="SettingsPanel" parent="." instance=ExtResource("3")]
+[node name="SettingsPanel" parent="." unique_id=1979382054 instance=ExtResource("3")]
 unique_name_in_owner = true
 layout_mode = 1

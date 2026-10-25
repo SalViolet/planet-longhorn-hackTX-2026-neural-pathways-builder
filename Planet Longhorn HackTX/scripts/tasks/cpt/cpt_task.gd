@@ -169,6 +169,7 @@ func _setup_run(dev_mode: bool) -> void:
 		_params["trials"] = CptConst.DEV_TRIALS
 		_params.erase("difficulty_level") # Short test runs must not move the adaptive engine.
 	_trial_ms = int(_params["trial_ms"])
+	@warning_ignore("integer_division")
 	_trial_count = int(_params.get("trials", int(_params["duration_ms"]) / _trial_ms))
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -193,6 +194,8 @@ func _start_schedule() -> void:
 
 func _update_run() -> void:
 	var elapsed := _elapsed_ms(_run_start_us)
+	# The schedule has a fixed grid, so the bar can move smoothly through each trial.
+	_progress.value = clampf(elapsed / (float(_trial_ms) * maxf(_trial_count, 1)), 0.0, 1.0)
 	var due := CptClock.trial_index(elapsed, _trial_ms)
 	while _index < due:
 		if _index >= 0:

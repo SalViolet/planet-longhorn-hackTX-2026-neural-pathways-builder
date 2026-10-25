@@ -211,3 +211,28 @@ func test_anticipatory_and_invalid_trials() -> void:
 	assert_eq(r["total_trials"], 55)
 	assert_eq(r["accuracy"], 1.0)
 	assert_almost_eq(r["pre_rt_ms"], 500.0, 1e-9)
+
+
+func test_gifts_are_shuffled_with_no_alternating_pattern() -> void:
+	var alternating := 0
+	for seed_value in 100:
+		var items := DccsSequence.stimuli(12, 1.0, _rng(seed_value))
+		assert_lte(DccsSequence.longest_run(items), DccsConst.MAX_SAME_STIMULUS_IN_ROW, "seed %d" % seed_value)
+		var blue := 0
+		for item in items:
+			blue += 1 if item["hue"] == DccsStimulus.Hue.BLUE else 0
+		assert_eq(blue, 6, "both gifts are used equally often")
+		var strict := true
+		for i in range(1, items.size()):
+			strict = strict and items[i]["hue"] != items[i - 1]["hue"]
+		alternating += 1 if strict else 0
+	assert_lt(alternating, 5, "the gifts do not simply take turns")
+
+
+func test_odd_block_sizes_are_balanced_to_within_one() -> void:
+	for seed_value in 50:
+		var items := DccsSequence.stimuli(7, 1.0, _rng(seed_value))
+		var blue := 0
+		for item in items:
+			blue += 1 if item["hue"] == DccsStimulus.Hue.BLUE else 0
+		assert_eq(absi(blue - (7 - blue)), 1)

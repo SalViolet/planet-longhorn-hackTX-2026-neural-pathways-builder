@@ -71,7 +71,8 @@ static func _style_button(t: Theme, type: StringName) -> void:
 
 
 static func _style_slider(t: Theme) -> void:
-	var half := UIConst.SLIDER_TRACK_THICKNESS / 2
+	@warning_ignore("integer_division")
+	var half : int = UIConst.SLIDER_TRACK_THICKNESS / 2
 	t.set_stylebox("slider", "HSlider", _box(UIConst.COLOR_SLIDER_TRACK, UIConst.COLOR_PANEL_BORDER, 1, half))
 	t.set_stylebox("grabber_area", "HSlider", _box(UIConst.COLOR_ACCENT, UIConst.COLOR_ACCENT, 1, half))
 	t.set_stylebox("grabber_area_highlight", "HSlider", _box(UIConst.COLOR_FOCUS, UIConst.COLOR_FOCUS, 1, half))

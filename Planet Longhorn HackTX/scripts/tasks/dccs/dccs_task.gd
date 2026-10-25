@@ -91,12 +91,27 @@ func start(params: Dictionary) -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_progress()
 	match _state:
 		State.LEAD_IN:
 			if _elapsed_ms(_lead_in_start_us) >= DccsConst.LEAD_IN_MS:
 				_begin_trial()
 		State.TRIAL:
 			_update_trial()
+
+
+func _update_progress() -> void:
+	var total := maxi(_session.total_trials(), 1)
+	var done := _session.completed_trials()
+	var partial := 0.0
+	if _state == State.TRIAL and not _trial.is_empty():
+		var elapsed := _elapsed_ms(_trial_start_us)
+		var duration := float(_params["cue_ms"] + _params["response_timeout_ms"] + _params["iti_ms"])
+		if _response_elapsed_ms >= 0.0:
+			duration = _response_elapsed_ms + float(_params["iti_ms"])
+		partial = clampf(elapsed / maxf(duration, 1.0), 0.0, 1.0)
+		done -= 1 # The session counts a trial as soon as it starts.
+	_progress.value = clampf((float(done) + partial) / float(total), 0.0, 1.0)
 
 
 func _input(event: InputEvent) -> void:

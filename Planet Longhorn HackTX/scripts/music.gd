@@ -5,6 +5,7 @@ extends Node
 ## which never touches trial timing.
 
 var _player: AudioStreamPlayer
+var _click_player: AudioStreamPlayer
 var _current_db := UIConst.MUSIC_SILENT_DB
 
 
@@ -16,6 +17,7 @@ static func target_db(in_task: bool, music_on: bool) -> float:
 
 
 func _ready() -> void:
+	_setup_clicks()
 	var stream := load(UIConst.MUSIC_PATH) as AudioStreamMP3
 	if stream == null:
 		push_warning("Music file missing: %s" % UIConst.MUSIC_PATH)
@@ -38,3 +40,23 @@ func _process(delta: float) -> void:
 		_player.play()
 	elif not audible and _player.playing:
 		_player.stop()
+
+
+## Every Button in the game, wherever it is made, plays one soft click when pressed.
+func _setup_clicks() -> void:
+	_click_player = AudioStreamPlayer.new()
+	_click_player.stream = ButtonClick.make_stream()
+	_click_player.volume_db = UIConst.CLICK_DB
+	add_child(_click_player)
+	get_tree().node_added.connect(_on_node_added)
+
+
+func _on_node_added(node: Node) -> void:
+	var button := node as Button
+	if button != null and not button.pressed.is_connected(_play_click):
+		button.pressed.connect(_play_click)
+
+
+func _play_click() -> void:
+	if DisplayServer.get_name() != "headless":
+		_click_player.play()

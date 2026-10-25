@@ -54,3 +54,8 @@ func test_music_target_volume() -> void:
 	assert_lt(UIConst.MUSIC_TASK_DB, UIConst.MUSIC_DB - 10.0, "a lot quieter during tasks")
 	assert_eq(MusicScript.target_db(false, false), UIConst.MUSIC_SILENT_DB)
 	assert_eq(MusicScript.target_db(true, false), UIConst.MUSIC_SILENT_DB)
+
+
+func test_sounds_are_built_in_code() -> void:
+	assert_gt(ButtonClick.make_stream().data.size(), 0, "button click")
+	assert_gt(MistakeCue.make_bing().data.size(), 0, "bing")

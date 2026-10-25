@@ -15,20 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Planet Longhorn"
-config/description="Cognitive tests are well established, but they're often really boring, especially for young kids. This is especially relevant because boredom, frustration and mental fatigue are known test score confounders in children. We wanted to find out whether the same tasks could live inside a story that children actually want to play, without losing what makes the tasks work. We hope that with more time and clinical testing it could serve as a crude screening for neurodevelopmental lags in young kids
-
-Players (ages 6-9) control a kid who is transported to a planet run by alien cartoon longhorns. Each story mission is built on an established cognitive task:
-
-Drum Circle (Corsi blocks): repeat the elders’ drum pattern to earn their trust and escape the spaceship.
-Herd Rescue (Go/No-Go): tap the friendly space cows and hold back on the evil snakes.
-Sorting Day (DCCS): sort creatures into pens as the elder’s rule switches between color and shape.
-Night Watch (CPT): guard the herd through a long, quiet stream and respond only to the rare thief.
-
-The game adapts using two separate dials. Difficulty adjusts after each run to keep play winnable, aiming for roughly 75-85% accuracy. Exposure gives more missions to the domains where the player is relatively weakest, while never dropping the strong ones. Difficulty ranges tuned for ages 6-9.
-
-It also produces a detailed clinician report with real user data. We do not attempt to interpret the results, but provide it to support trained professional judgement. It provides detailed summary statistics such as reaction time, number of trials completed, d-prime, incomplete/skipped trials, hit rates and more.
-
-"
+config/description="Planet Longhorn is a story adventure with four cognitive-task missions: Drum Circle (Corsi), Herd Rescue (Go/No-Go), Sorting Day (DCCS), and Night Watch (CPT). The game adjusts task difficulty and mission choice based on play. Profiles and performance data are stored locally on the device. The game does not diagnose or screen for conditions, and its scores are not a clinical assessment."
 config/version="1.0"
 run/main_scene="res://scenes/start_screen.tscn"
 config/auto_accept_quit=false

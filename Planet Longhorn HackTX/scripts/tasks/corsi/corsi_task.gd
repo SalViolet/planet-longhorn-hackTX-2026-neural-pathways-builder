@@ -79,6 +79,7 @@ func start(params: Dictionary) -> void:
 
 func _process(_delta: float) -> void:
 	var elapsed_ms := float(Time.get_ticks_usec() - _phase_start_us) / TaskConst.USEC_PER_MS
+	_update_progress(elapsed_ms)
 	match _phase:
 		Phase.PRE_TRIAL:
 			if elapsed_ms >= CorsiConst.PRE_TRIAL_MS:
@@ -88,6 +89,21 @@ func _process(_delta: float) -> void:
 		Phase.INTER_TRIAL:
 			if elapsed_ms >= CorsiConst.INTER_TRIAL_MS:
 				_next_trial()
+
+
+func _update_progress(elapsed_ms: float) -> void:
+	var first_span := clampi(int(_params["start_span"]), 1, CorsiConst.MAX_SPAN)
+	var trial_capacity := (CorsiConst.MAX_SPAN - first_span + 1) * CorsiConst.TRIALS_PER_SPAN
+	if trial_capacity <= 0:
+		return
+	var partial := 0.0
+	if _phase == Phase.PRESENT and not _sequence.is_empty():
+		var presentation_ms := float(_sequence.size()) * float(_params["item_duration_ms"] + _params["gap_ms"])
+		partial = 0.7 * clampf(elapsed_ms / maxf(presentation_ms, 1.0), 0.0, 1.0)
+	elif _phase == Phase.RESPOND and not _sequence.is_empty():
+		partial = 0.7 + 0.3 * clampf(float(_response.size()) / float(_sequence.size()), 0.0, 1.0)
+	var completed := _progress_fraction() * float(trial_capacity)
+	_progress.value = clampf((completed + partial) / float(trial_capacity), 0.0, 1.0)
 
 
 func abort_current_trial(reason: String) -> void:
@@ -213,12 +229,14 @@ func _begin_response() -> void:
 func _on_block_tapped(block_index: int) -> void:
 	if _phase != Phase.RESPOND:
 		return
+	if _response.is_empty():
+		_status.text = CorsiConst.STATUS_NONE
 	_tap_ms.append(TaskConst.us_to_ms(Time.get_ticks_usec() - _phase_start_us))
 	_response.append(block_index)
 	var expected := _sequence[_response.size() - 1]
 	if block_index == expected:
 		_blocks[block_index].flash(CorsiConst.TAP_HIGHLIGHT_MS, false, true)
-		_mistake_cue.play_correct(TaskConst.TEXT_RIGHT)
+		_mistake_cue.play_correct(TaskConst.TEXT_RIGHT, false) # Silent: the bing comes once per set.
 	else:
 		_blocks[block_index].flash(CorsiConst.TAP_HIGHLIGHT_MS, true)
 		_mistake_cue.play(false, TaskConst.TEXT_TRY_AGAIN) # Silent: every stone shares one tone.
@@ -231,6 +249,10 @@ func _finish_trial() -> void:
 	var trial_number := _session.current_trial_number()
 	var trial_params := _trial_params() # Read before submit_response moves the span on.
 	var correct := _session.submit_response(_response)
+	if correct:
+		_mistake_cue.play_bing() # The whole set was right.
+	else:
+		_mistake_cue.play_bom() # The set was not 100% right.
 	logger.log_trial(
 			trial_number,
 			trial_params,

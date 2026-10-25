@@ -61,6 +61,7 @@ func _ready() -> void:
 	_progress = _add_progress_bar()
 	_pad = _add_response_pad(GoNoGoConst.PAD_TEXT, GoNoGoConst.COLOR_PAD, _stimulus)
 	_pad.pressed_down.connect(_on_pad_pressed)
+	_set_herd_button_enabled(false)
 	_points_offer = _add_points_offer()
 	finished.connect(_show_results)
 	set_process(false)
@@ -99,12 +100,25 @@ func start(params: Dictionary) -> void:
 
 
 func _process(_delta: float) -> void:
+	_update_progress()
 	match _state:
 		State.LEAD_IN:
 			if _elapsed_ms(_lead_in_start_us) >= GoNoGoConst.LEAD_IN_MS:
 				_begin_trial()
 		State.TRIAL:
 			_update_trial()
+
+
+func _update_progress() -> void:
+	var total := maxi(_session.total_trials(), 1)
+	var done := _session.completed_trials()
+	var partial := 0.0
+	if _state == State.TRIAL and not _trial.is_empty():
+		var elapsed := _elapsed_ms(_trial_start_us)
+		var duration := float(_params["fixation_ms"] + _params["stimulus_ms"] + int(_trial["isi_ms"]))
+		partial = clampf(elapsed / maxf(duration, 1.0), 0.0, 1.0)
+		done -= 1 # The session counts a trial as soon as it starts.
+	_progress.value = clampf((float(done) + partial) / float(total), 0.0, 1.0)
 
 
 func _input(event: InputEvent) -> void:
@@ -118,7 +132,7 @@ func _input(event: InputEvent) -> void:
 
 ## The big button was pushed with the mouse or a finger (it already showed itself sinking).
 func _on_pad_pressed() -> void:
-	if _state == State.TRIAL:
+	if _state == State.TRIAL and _phase != GoNoGoClock.Phase.FIXATION:
 		_register_response()
 
 
@@ -161,12 +175,14 @@ func _on_start_pressed() -> void:
 
 
 func _begin_lead_in() -> void:
+	_set_herd_button_enabled(false)
 	_state = State.LEAD_IN
 	_stimulus.clear()
 	_lead_in_start_us = Time.get_ticks_usec()
 
 
 func _begin_trial() -> void:
+	_set_herd_button_enabled(false)
 	_progress.value = float(_session.completed_trials()) / _session.total_trials()
 	if not _session.has_next():
 		_complete()
@@ -202,6 +218,7 @@ func _update_trial() -> void:
 			_stimulus.show_calf()
 		else:
 			_stimulus.show_snake()
+		_set_herd_button_enabled(true)
 	elif phase == GoNoGoClock.Phase.ISI:
 		_stimulus.clear()
 	if phase != GoNoGoClock.Phase.STIMULUS and _stim_onset_us == 0:
@@ -250,6 +267,7 @@ func _stimulus_info() -> Dictionary:
 
 
 func _complete() -> void:
+	_set_herd_button_enabled(false)
 	_state = State.DONE
 	set_process(false)
 	_stimulus.clear()
@@ -257,6 +275,11 @@ func _complete() -> void:
 	results["difficulty_level"] = int(_params.get("difficulty_level", -1))
 	_progress.value = 1.0
 	_finish(results)
+
+
+func _set_herd_button_enabled(enabled: bool) -> void:
+	if _pad != null:
+		_pad.mouse_filter = Control.MOUSE_FILTER_STOP if enabled else Control.MOUSE_FILTER_IGNORE
 
 
 func _elapsed_ms(since_us: int) -> float:

@@ -77,6 +77,15 @@ const MUSIC_TASK_DB := -34.0 # During the four tasks: a lot quieter.
 const MUSIC_SILENT_DB := -60.0
 const MUSIC_FADE_DB_PER_SECOND := 30.0
 
+# --- Button click (generated in code) ---
+const CLICK_DB := -6.0
+const CLICK_MIX_RATE := 22050
+const CLICK_SECONDS := 0.06
+const CLICK_HZ := 1600.0
+const CLICK_DECAY := 80.0
+const CLICK_NOISE_AMOUNT := 0.4
+const CLICK_VOLUME := 0.6
+
 # --- Settings defaults ---
 const DEFAULT_MASTER_VOLUME := 0.8
 const DEFAULT_MUSIC_ON := true
